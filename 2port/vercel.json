@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "cd 2port && npm install && npm run vercel-build",
-  "outputDirectory": "2port/dist/routing/browser",
+  "outputDirectory": "2port/dist/routing/browser/browser",
   "installCommand": "cd 2port && npm install",
   "builds": [
     {
@@ -9,13 +9,13 @@
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "cd 2port && npm run vercel-build",
-        "outputDirectory": "dist/routing/browser"
+        "outputDirectory": "dist/routing/browser/browser"
       }
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))$",
       "dest": "/$1"
     },
     {
@@ -24,6 +24,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/2port/dist/routing/browser/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
