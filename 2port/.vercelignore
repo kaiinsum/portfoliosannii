@@ -1,0 +1,13 @@
+node_modules
+.angular
+.git
+.vscode
+.gitignore
+README.md
+package-lock.json
+tsconfig.json
+tsconfig.app.json
+tsconfig.spec.json
+.editorconfig
+dist
+src

@@ -1,0 +1,8 @@
+ADMIN_CREDENTIALS
+username=admin
+password=admin123
+
+NOTES
+- Update these values and also update `src/environments/environment.ts` to match.
+- This file is for you to edit quickly (it is not read by the browser at runtime).
+

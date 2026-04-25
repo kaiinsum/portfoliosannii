@@ -1,0 +1,10 @@
+INTRODUCTION
+
+Design mode intro:
+- Edit in `src/assets/data/design/about.json` -> "intro"
+- Or via Admin -> About -> Intro (Design mode)
+
+Technical mode intro:
+- Edit in `src/assets/data/technical/about.json` -> "intro"
+- Or via Admin -> About -> Intro (Technical mode)
+

@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--app-surface) 86%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+html[data-theme='dark'] .app-header {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  border-bottom: 1px solid var(--app-border);
+}
+
+.avatar {
+  border-radius: 999px;
+  transition:
+    transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 520ms ease;
+  transform: rotate(0deg);
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.14));
+}
+
+.avatar--flipped {
+  transform: rotate(180deg);
+}
+
+/* Prevent header actions from wrapping on small screens */
+.app-header nav {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.app-header nav::-webkit-scrollbar {
+  display: none;
+}
+
+.page-fade {
+  animation: pageFade 280ms ease-out both;
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
