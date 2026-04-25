@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "installCommand": "npm install",
-  "buildCommand": "ng build --configuration production",
-  "outputDirectory": "dist/routing/browser",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "ng build --configuration production",
+        "outputDirectory": "dist/routing/browser"
+      }
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
