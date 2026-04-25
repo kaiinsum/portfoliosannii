@@ -1,8 +1,7 @@
 {
   "version": 2,
-  "rootDirectory": "2port",
   "installCommand": "npm install",
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "ng build --configuration production",
   "outputDirectory": "dist/routing/browser",
   "rewrites": [
     {
