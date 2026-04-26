@@ -9,7 +9,7 @@
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "cd 2port && npm run vercel-build",
-        "outputDirectory": "2port/dist/routing/browser/browser"
+        "outputDirectory": "2port/dist/routing/browser"
       }
     }
   ],
@@ -24,6 +24,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/2port/dist/routing/browser/browser/index.html" }
+    { "source": "/(.*)", "destination": "/2port/dist/routing/browser/index.html" }
   ]
 }
