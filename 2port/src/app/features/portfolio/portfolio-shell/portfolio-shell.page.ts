@@ -13,11 +13,10 @@ import { PortfolioModeService } from '../../../core/services/portfolio-mode.serv
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { ColorSplashDirective } from '../../../shared/directives/color-splash.directive';
-import { StarSkyDirective } from '../../../shared/directives/star-sky.directive';
 
 @Component({
   selector: 'app-portfolio-shell-page',
-  imports: [RouterOutlet, RouterLink, ColorSplashDirective, StarSkyDirective],
+  imports: [RouterOutlet, RouterLink, ColorSplashDirective],
   template: `
     <header class="app-header border-bottom">
       <div class="container py-3 d-flex align-items-center justify-content-between gap-3">
@@ -61,7 +60,7 @@ import { StarSkyDirective } from '../../../shared/directives/star-sky.directive'
     </header>
 
     <main class="app-main">
-      <div class="page-fade container py-4" appColorSplash appStarSky>
+      <div class="page-fade container py-4" appColorSplash>
         <router-outlet />
       </div>
     </main>
