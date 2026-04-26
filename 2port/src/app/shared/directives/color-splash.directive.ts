@@ -41,14 +41,14 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
     this.checkTheme();
     this.observeThemeChanges();
     this.startAnimation();
-    this.addMouseClickListener();
     
     // Add initial splash effect on page load
     setTimeout(() => {
       if (!this.isDarkTheme) {
         this.createInitialSplash();
+        this.addMouseClickListener();
       }
-    }, 500);
+    }, 100);
   }
 
   ngOnDestroy(): void {
@@ -111,20 +111,25 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
     const hostElement = this.element.nativeElement as HTMLElement;
     const rect = hostElement.getBoundingClientRect();
     
-    // Create 3-5 initial splashes
+    // Create 3-5 initial splashes (reduced to prevent overflow)
     const initialSplashCount = Math.floor(Math.random() * 3) + 3;
+    
+    // Ensure splashes are created within safe bounds
+    const safeMargin = 50;
+    const safeWidth = Math.max(0, rect.width - safeMargin * 2);
+    const safeHeight = Math.max(0, rect.height - safeMargin * 2);
     
     for (let i = 0; i < initialSplashCount; i++) {
       setTimeout(() => {
         const splash: ColorSplash = {
           element: this.document.createElement('div'),
-          x: Math.random() * rect.width,
-          y: Math.random() * rect.height,
-          size: Math.random() * 60 + 40,
+          x: safeMargin + Math.random() * safeWidth,
+          y: safeMargin + Math.random() * safeHeight,
+          size: Math.random() * 50 + 30, // Reduced size: 30-80px
           color: this.colors[Math.floor(Math.random() * this.colors.length)],
           velocity: {
-            x: (Math.random() - 0.5) * 2,
-            y: (Math.random() - 0.5) * 2 - 1
+            x: (Math.random() - 0.5) * 2, // Reduced velocity
+            y: (Math.random() - 0.5) * 2 - 1 // Reduced movement
           },
           opacity: 0,
           lifetime: 0
@@ -146,13 +151,19 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
         setTimeout(() => {
           this.createClickSplash(splash.x, splash.y);
         }, 50);
-      }, i * 100); // Stagger initial splashes
+      }, i * 80); // Faster stagger initial splashes
     }
     
-    // Also trigger a click effect at center after initial splashes
+    // Also trigger multiple click effects at different positions
     setTimeout(() => {
       this.createClickSplash(rect.width / 2, rect.height / 2);
-    }, initialSplashCount * 100 + 200);
+      setTimeout(() => {
+        this.createClickSplash(rect.width / 3, rect.height / 3);
+        setTimeout(() => {
+          this.createClickSplash(rect.width * 2/3, rect.height * 2/3);
+        }, 100);
+      }, 100);
+    }, initialSplashCount * 80 + 200);
   }
 
   private startAnimation(): void {
@@ -169,19 +180,24 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
   }
 
   private createRandomSplash(): void {
-    if (Math.random() < 0.05) { // 5% chance per frame (more frequent)
+    if (Math.random() < 0.08) { // 8% chance per frame (even more frequent)
       const hostElement = this.element.nativeElement as HTMLElement;
       const rect = hostElement.getBoundingClientRect();
       
+      // Ensure splashes are created within safe bounds
+      const safeMargin = 50; // 50px margin from edges
+      const safeWidth = Math.max(0, rect.width - safeMargin * 2);
+      const safeHeight = Math.max(0, rect.height - safeMargin * 2);
+      
       const splash: ColorSplash = {
         element: this.document.createElement('div'),
-        x: Math.random() * rect.width,
-        y: Math.random() * rect.height,
-        size: Math.random() * 80 + 30, // 30-110px (larger)
+        x: safeMargin + Math.random() * safeWidth,
+        y: safeMargin + Math.random() * safeHeight,
+        size: Math.random() * 60 + 30, // Reduced size: 30-90px
         color: this.colors[Math.floor(Math.random() * this.colors.length)],
         velocity: {
-          x: (Math.random() - 0.5) * 3,
-          y: (Math.random() - 0.5) * 3 - 1.5 // More movement
+          x: (Math.random() - 0.5) * 2, // Reduced velocity
+          y: (Math.random() - 0.5) * 2 - 1 // Reduced movement
         },
         opacity: 0,
         lifetime: 0
@@ -235,10 +251,25 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
   }
 
   private updateSplashes(): void {
+    const hostElement = this.element.nativeElement as HTMLElement;
+    const rect = hostElement.getBoundingClientRect();
+    
     this.splashes = this.splashes.filter(splash => {
       // Update position
       splash.x += splash.velocity.x;
       splash.y += splash.velocity.y;
+      
+      // Boundary checking - keep splashes within container
+      const margin = splash.size / 2;
+      if (splash.x < margin || splash.x > rect.width - margin) {
+        splash.velocity.x *= -0.8; // Bounce back with damping
+        splash.x = Math.max(margin, Math.min(rect.width - margin, splash.x));
+      }
+      
+      if (splash.y < margin || splash.y > rect.height - margin) {
+        splash.velocity.y *= -0.8; // Bounce back with damping
+        splash.y = Math.max(margin, Math.min(rect.height - margin, splash.y));
+      }
       
       // Update lifetime and opacity
       splash.lifetime += 1;
@@ -251,9 +282,9 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
       }
       
       // Add slight gravity and friction
-      splash.velocity.y += 0.05;
-      splash.velocity.x *= 0.99;
-      splash.velocity.y *= 0.99;
+      splash.velocity.y += 0.02; // Reduced gravity
+      splash.velocity.x *= 0.98; // Slightly more friction
+      splash.velocity.y *= 0.98;
       
       // Remove if fully faded
       return splash.opacity > 0;

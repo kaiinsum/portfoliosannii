@@ -1,6 +1,12 @@
 :host {
   display: block;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-main {
+  overflow: hidden;
+  position: relative;
 }
 
 .app-header {
@@ -150,6 +156,9 @@ html[data-theme='dark'] .nav-link-custom.router-link-active {
 
 .page-fade {
   animation: pageFade 280ms ease-out both;
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
 }
 
 @keyframes pageFade {
