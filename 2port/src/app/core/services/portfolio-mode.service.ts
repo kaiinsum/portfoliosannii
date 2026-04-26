@@ -21,6 +21,9 @@ export class PortfolioModeService {
     const saved = (this.storage.getItem(STORAGE_KEY) as PortfolioMode | null) ?? null;
     if (saved === 'design' || saved === 'technical') {
       this._mode.set(saved);
+    } else {
+      // Default to technical (dark theme)
+      this._mode.set('technical');
     }
 
     effect(() => {

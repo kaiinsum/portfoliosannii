@@ -1,0 +1,158 @@
+<div class="animation-demo">
+  <!-- Animated Gradient Background -->
+  <div #gradientBackground class="gradient-background"></div>
+  
+  <!-- Particle Background -->
+  <div #particleContainer class="particle-container">
+    <div class="particle" *ngFor="let i of [].constructor(50)"></div>
+  </div>
+  
+  <!-- Floating Shapes -->
+  <div #shapesContainer class="shapes-container">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+    <div class="floating-shape shape-4"></div>
+    <div class="floating-shape shape-5"></div>
+  </div>
+  
+  <!-- Wave Animation -->
+  <div #waveContainer class="wave-container">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <!-- Hero Section with Animated Text -->
+    <section class="hero-section">
+      <h1 #heroText class="hero-title" (click)="onTextAnimation(heroText)">
+        Welcome to Animation Paradise
+      </h1>
+      <p class="hero-subtitle">Experience the power of Anime.js animations</p>
+      <button #heroButton class="hero-button" (mouseenter)="onButtonHover(heroButton)">
+        Explore Animations
+      </button>
+    </section>
+    
+    <!-- Parallax Section -->
+    <div #parallaxContainer class="parallax-section">
+      <div class="parallax-layer layer-1"></div>
+      <div class="parallax-layer layer-2"></div>
+      <div class="parallax-layer layer-3"></div>
+      <div class="parallax-content">
+        <h2>Interactive Parallax</h2>
+        <p>Move your mouse to see the parallax effect</p>
+      </div>
+    </div>
+    
+    <!-- Animated Cards Section -->
+    <section class="cards-section">
+      <h2>Animated Cards</h2>
+      <div class="cards-grid">
+        <div #animatedCard class="animated-card card-1">
+          <div class="card-icon">🎨</div>
+          <h3>Creative Design</h3>
+          <p>Beautiful animations that bring your UI to life</p>
+        </div>
+        <div #animatedCard class="animated-card card-2">
+          <div class="card-icon">⚡</div>
+          <h3>Lightning Fast</h3>
+          <p>Optimized animations for smooth performance</p>
+        </div>
+        <div #animatedCard class="animated-card card-3">
+          <div class="card-icon">🎯</div>
+          <h3>Precise Control</h3>
+          <p>Fine-tuned timing and easing functions</p>
+        </div>
+        <div #animatedCard class="animated-card card-4">
+          <div class="card-icon">🔄</div>
+          <h3>Loop Effects</h3>
+          <p>Seamless looping animations for endless motion</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Morphing Shapes Section -->
+    <section class="morphing-section">
+      <h2>Morphing Shapes</h2>
+      <div class="morphing-shapes-container">
+        <div #morphingShape class="morphing-shape shape-a"></div>
+        <div #morphingShape class="morphing-shape shape-b"></div>
+        <div #morphingShape class="morphing-shape shape-c"></div>
+        <div #morphingShape class="morphing-shape shape-d"></div>
+      </div>
+    </section>
+    
+    <!-- Interactive List Section -->
+    <section class="list-section">
+      <h2>Animated List Items</h2>
+      <ul class="animated-list">
+        <li #listItem class="list-item">✨ Smooth transitions and effects</li>
+        <li #listItem class="list-item">🎪 Staggered animations for dynamic entry</li>
+        <li #listItem class="list-item">🌈 Color transitions and gradients</li>
+        <li #listItem class="list-item">🎭 Transform and scale animations</li>
+        <li #listItem class="list-item">🎪 Interactive hover states</li>
+      </ul>
+    </section>
+    
+    <!-- Interactive Elements Section -->
+    <section class="interactive-section">
+      <h2>Interactive Elements</h2>
+      
+      <div class="interactive-grid">
+        <!-- Pulse Animation -->
+        <div class="interactive-item">
+          <h3>Pulse Effect</h3>
+          <div #pulseElement class="pulse-box" (click)="createPulse(pulseElement)">
+            Click Me!
+          </div>
+        </div>
+        
+        <!-- Loading Animation -->
+        <div class="interactive-item">
+          <h3>Loading Spinner</h3>
+          <div #loadingElement class="loading-spinner" (click)="createLoading(loadingElement)">
+            🔄
+          </div>
+        </div>
+        
+        <!-- Text Reveal -->
+        <div class="interactive-item">
+          <h3>Text Reveal</h3>
+          <p #revealText class="reveal-text" (click)="onTextAnimation(revealText)">
+            Click to reveal this text with animation!
+          </p>
+        </div>
+        
+        <!-- Scroll Animation Trigger -->
+        <div class="interactive-item">
+          <h3>Scroll Animation</h3>
+          <div #scrollElement class="scroll-box">
+            Scroll into view to animate
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Button Showcase -->
+    <section class="buttons-section">
+      <h2>Animated Buttons</h2>
+      <div class="buttons-grid">
+        <button #animatedButton class="btn btn-primary" (mouseenter)="onButtonHover(animatedButton)">
+          Primary Button
+        </button>
+        <button #animatedButton class="btn btn-secondary" (mouseenter)="onButtonHover(animatedButton)">
+          Secondary Button
+        </button>
+        <button #animatedButton class="btn btn-success" (mouseenter)="onButtonHover(animatedButton)">
+          Success Button
+        </button>
+        <button #animatedButton class="btn btn-danger" (mouseenter)="onButtonHover(animatedButton)">
+          Danger Button
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
