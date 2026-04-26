@@ -1,8 +1,19 @@
 {
-  "rewrites": [
+  "version": 2,
+  "buildCommand": "cd 2port && npm install && npm run vercel-build",
+  "outputDirectory": "2port/dist/routing/browser/browser",
+  "installCommand": "cd 2port && npm install",
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))$",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/2port/dist/routing/browser/browser/index.html" }
   ]
 }
