@@ -1,7 +1,0 @@
-{
-  "heading": "Hi, I’m Your Name",
-  "intro": "I build production Angular apps with clean architecture, testing, and performance in mind. This is the Technical Portfolio mode (dark theme).",
-  "tags": ["Angular", "TypeScript", "RxJS", "SSR", "Testing", "CI/CD"],
-  "avatar": "assets/avatar/avatar.svg"
-}
-
