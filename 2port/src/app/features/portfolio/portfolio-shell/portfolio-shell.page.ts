@@ -13,10 +13,11 @@ import { PortfolioModeService } from '../../../core/services/portfolio-mode.serv
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { ColorSplashDirective } from '../../../shared/directives/color-splash.directive';
+import { NeonGlowDirective } from '../../../shared/directives/neon-glow.directive';
 
 @Component({
   selector: 'app-portfolio-shell-page',
-  imports: [RouterOutlet, RouterLink, ColorSplashDirective],
+  imports: [RouterOutlet, RouterLink, ColorSplashDirective, NeonGlowDirective],
   template: `
     <header class="app-header border-bottom">
       <div class="container py-3 d-flex align-items-center justify-content-between gap-3">
@@ -60,7 +61,7 @@ import { ColorSplashDirective } from '../../../shared/directives/color-splash.di
     </header>
 
     <main class="app-main">
-      <div class="page-fade container py-4" appColorSplash>
+      <div class="page-fade container py-4" appColorSplash appNeonGlow>
         <router-outlet />
       </div>
     </main>

@@ -1,10 +1,12 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import type { AboutContent, ContactContent, PortfolioMode, Project } from '../../../../core/models/portfolio.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ContentService } from '../../../../core/services/content.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { NotificationComponent } from '../../../../shared/components/notification/notification.component';
 
 function newId(prefix = 'p'): string {
   const id =
@@ -16,19 +18,32 @@ function newId(prefix = 'p'): string {
 
 @Component({
   selector: 'app-admin-dashboard-page',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ConfirmDialogComponent, NotificationComponent],
   template: `
-    <div class="container py-4">
-      <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-        <div>
-          <h1 class="h4 mb-1">Admin dashboard</h1>
-          <div class="small text-secondary">Edit About / Projects / Contact for both modes.</div>
+    <div class="admin-dashboard">
+      <div class="container py-4">
+        <!-- Header -->
+        <div class="admin-header">
+          <div class="admin-header-content">
+            <div class="admin-title">
+              <h1 class="admin-heading">
+                <span class="admin-icon">🎨</span>
+                Admin Dashboard
+              </h1>
+              <p class="admin-subtitle">Edit About / Projects / Contact for both modes</p>
+            </div>
+            <div class="admin-actions">
+              <a class="btn btn-outline-secondary btn-fancy" routerLink="/">
+                <span class="btn-icon">🏠</span>
+                Back to site
+              </a>
+              <button class="btn btn-outline-danger btn-fancy" type="button" (click)="logout()">
+                <span class="btn-icon">🚪</span>
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="d-flex gap-2">
-          <a class="btn btn-sm btn-outline-secondary" routerLink="/">Back to site</a>
-          <button class="btn btn-sm btn-outline-danger" type="button" (click)="logout()">Logout</button>
-        </div>
-      </div>
 
       <div class="card border-0 shadow-sm mb-3">
         <div class="card-body p-3 d-flex flex-wrap align-items-center gap-2 justify-content-between">
@@ -116,7 +131,10 @@ function newId(prefix = 'p'): string {
                         <div class="fw-semibold">{{ p.title }}</div>
                         <div class="d-flex gap-2">
                           <button class="btn btn-sm btn-outline-secondary" type="button" (click)="startEdit(p)">Edit</button>
-                          <button class="btn btn-sm btn-outline-danger" type="button" (click)="remove(p.id)">Delete</button>
+                          <button class="btn btn-sm btn-outline-danger btn-fancy" type="button" (click)="confirmDelete(p.id)">
+                          <span class="btn-icon">🗑️</span>
+                          Delete
+                        </button>
                         </div>
                       </div>
                       <div class="small text-secondary mt-1">{{ p.id }}</div>
@@ -208,13 +226,24 @@ function newId(prefix = 'p'): string {
           </div>
         </div>
       </div>
+      </div>
+      
+      <!-- Confirmation Dialog -->
+      <app-confirm-dialog #confirmDialog />
+      
+      <!-- Notification Component -->
+      <app-notification #notification />
     </div>
   `,
+  styleUrl: './admin-dashboard.page.css',
 })
 export class AdminDashboardPage {
   private readonly auth = inject(AuthService);
   private readonly content = inject(ContentService);
   private readonly title = inject(Title);
+  
+  @ViewChild('confirmDialog') confirmDialog!: ConfirmDialogComponent;
+  @ViewChild('notification') notification!: NotificationComponent;
 
   readonly mode = signal<PortfolioMode>('design');
 
@@ -268,18 +297,23 @@ export class AdminDashboardPage {
   }
 
   async saveAbout(): Promise<void> {
-    const raw = this.aboutForm.getRawValue();
-    const about: AboutContent = {
-      heading: raw.heading,
-      intro: raw.intro,
-      tags: raw.tags
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-      avatar: raw.avatar,
-    };
-    await this.content.updateAbout(this.mode(), about);
-    await this.load();
+    try {
+      const raw = this.aboutForm.getRawValue();
+      const about: AboutContent = {
+        heading: raw.heading,
+        intro: raw.intro,
+        tags: raw.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+        avatar: raw.avatar,
+      };
+      await this.content.updateAbout(this.mode(), about);
+      await this.load();
+      this.notification.success('About section updated successfully');
+    } catch (error) {
+      this.notification.error('Failed to update about section. Please try again.');
+    }
   }
 
   async onAvatarUpload(ev: Event): Promise<void> {
@@ -293,21 +327,26 @@ export class AdminDashboardPage {
   }
 
   async saveContact(): Promise<void> {
-    const raw = this.contactForm.getRawValue();
-    const contact: ContactContent = {
-      email: raw.email,
-      socials: raw.socials
-        .split('\n')
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .map((l) => {
-          const [label, url] = l.split('|').map((x) => x.trim());
-          return { label: label || url, url };
-        })
-        .filter((s) => !!s.url),
-    };
-    await this.content.updateContact(this.mode(), contact);
-    await this.load();
+    try {
+      const raw = this.contactForm.getRawValue();
+      const contact: ContactContent = {
+        email: raw.email,
+        socials: raw.socials
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((l) => {
+            const [label, url] = l.split('|').map((x) => x.trim());
+            return { label: label || url, url };
+          })
+          .filter((s) => !!s.url),
+      };
+      await this.content.updateContact(this.mode(), contact);
+      await this.load();
+      this.notification.success('Contact information updated successfully');
+    } catch (error) {
+      this.notification.error('Failed to update contact information. Please try again.');
+    }
   }
 
   startCreate(): void {
@@ -345,32 +384,62 @@ export class AdminDashboardPage {
   }
 
   async saveProject(): Promise<void> {
-    const raw = this.projectForm.getRawValue();
-    const project: Project = {
-      id: this.editingId ?? newId(this.mode() === 'design' ? 'd' : 't'),
-      title: raw.title,
-      description: raw.description,
-      image: raw.image,
-      images: raw.images || [],
-      techStack: raw.techStack
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-      links: raw.links
-        .split('\n')
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .map((l) => {
-          const [label, url] = l.split('|').map((x) => x.trim());
-          return { label: label || url, url };
-        })
-        .filter((s) => !!s.url),
-      featured: !!raw.featured,
-      date: raw.date || undefined,
-    };
-    await this.content.upsertProject(this.mode(), project);
-    await this.load();
-    this.startCreate();
+    try {
+      const raw = this.projectForm.getRawValue();
+      const project: Project = {
+        id: this.editingId ?? newId(this.mode() === 'design' ? 'd' : 't'),
+        title: raw.title,
+        description: raw.description,
+        image: raw.image,
+        images: raw.images || [],
+        techStack: raw.techStack
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+        links: raw.links
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((l) => {
+            const [label, url] = l.split('|').map((x) => x.trim());
+            return { label: label || url, url };
+          })
+          .filter((s) => !!s.url),
+        featured: !!raw.featured,
+        date: raw.date || undefined,
+      };
+      await this.content.upsertProject(this.mode(), project);
+      await this.load();
+      this.startCreate();
+      
+      const action = this.editingId ? 'updated' : 'created';
+      this.notification.success(`Project "${project.title}" ${action} successfully`);
+    } catch (error) {
+      this.notification.error('Failed to save project. Please try again.');
+    }
+  }
+
+  async confirmDelete(id: string): Promise<void> {
+    const project = this.projects().find(p => p.id === id);
+    if (!project) return;
+    
+    const confirmed = await this.confirmDialog.show({
+      title: 'Delete Project',
+      message: `Are you sure you want to delete "${project.title}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
+    });
+    
+    if (confirmed) {
+      try {
+        await this.content.deleteProject(this.mode(), id);
+        await this.load();
+        this.notification.success(`Project "${project.title}" deleted successfully`);
+      } catch (error) {
+        this.notification.error('Failed to delete project. Please try again.');
+      }
+    }
   }
 
   async remove(id: string): Promise<void> {
