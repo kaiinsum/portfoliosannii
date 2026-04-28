@@ -6,11 +6,7 @@
   "builds": [
     {
       "src": "2port/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "cd 2port && npm install && npm run vercel-build",
-        "outputDirectory": "2port/dist/routing/browser"
-      }
+      "use": "@vercel/static-build"
     }
   ],
   "rewrites": [
