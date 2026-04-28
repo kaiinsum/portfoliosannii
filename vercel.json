@@ -2,11 +2,18 @@
   "version": 2,
   "buildCommand": "cd 2port && npm install && npm run vercel-build",
   "outputDirectory": "2port/dist/routing/browser",
-  "framework": "angular",
-  "routes": [
+  "installCommand": "cd 2port && npm install",
+  "builds": [
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "src": "2port/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "cd 2port && npm install && npm run vercel-build",
+        "outputDirectory": "2port/dist/routing/browser"
+      }
     }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/2port/dist/routing/browser/index.html" }
   ]
 }
