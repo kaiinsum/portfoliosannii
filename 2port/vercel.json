@@ -5,10 +5,10 @@
   "installCommand": "npm install",
   "builds": [
     {
-      "src": "2port/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "2port/dist/routing/browser"
+        "distDir": "dist/routing/browser"
       }
     }
   ],
