@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd 2port && npm run build",
+  "buildCommand": "cd 2port && npm install && npm run vercel-build",
   "outputDirectory": "2port/dist/routing/browser",
   "framework": "angular",
   "routes": [
