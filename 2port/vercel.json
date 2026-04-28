@@ -10,6 +10,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "dist/routing/browser/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
