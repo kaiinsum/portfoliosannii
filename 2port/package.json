@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "vercel-build": "ng build --configuration production"
+    "vercel-build": "node scripts/vercel-build.js",
+    "vercel-build-simple": "ng build --configuration production",
+    "test-build": "node scripts/test-build.js"
   },
   "prettier": {
     "printWidth": 100,
