@@ -4,6 +4,5 @@ node_modules
 .vscode
 .gitignore
 README.md
-package-lock.json
 .editorconfig
 dist
