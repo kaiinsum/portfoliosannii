@@ -5,9 +5,5 @@ node_modules
 .gitignore
 README.md
 package-lock.json
-tsconfig.json
-tsconfig.app.json
-tsconfig.spec.json
 .editorconfig
 dist
-src
