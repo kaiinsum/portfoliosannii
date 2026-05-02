@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/routing/browser",
+  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "npm install && npm run vercel-build",
+        "outputDirectory": "dist/routing/browser"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))$",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
