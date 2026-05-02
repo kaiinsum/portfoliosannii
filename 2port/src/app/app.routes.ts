@@ -6,10 +6,6 @@ export const routes: Routes = [
     loadChildren: () => import('./features/portfolio/portfolio.routes').then((m) => m.PORTFOLIO_ROUTES),
   },
   {
-    path: 'animations',
-    loadComponent: () => import('./features/animation-demo/animation-demo.component').then((m) => m.AnimationDemoComponent),
-  },
-  {
     path: 'admin',
     loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
