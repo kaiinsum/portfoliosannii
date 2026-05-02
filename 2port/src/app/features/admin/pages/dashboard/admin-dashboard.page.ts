@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import type { AboutContent, ContactContent, PortfolioMode, Project } from '../../../../core/models/portfolio.models';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -19,7 +19,7 @@ function newId(prefix = 'p'): string {
 
 @Component({
   selector: 'app-admin-dashboard-page',
-  imports: [ReactiveFormsModule, RouterLink, ConfirmDialogComponent, NotificationComponent],
+  imports: [ReactiveFormsModule, ConfirmDialogComponent, NotificationComponent],
   template: `
     <div class="admin-dashboard">
       <div class="container py-4">
@@ -34,10 +34,10 @@ function newId(prefix = 'p'): string {
               <p class="admin-subtitle">Edit About / Projects / Contact for both modes</p>
             </div>
             <div class="admin-actions">
-              <a class="btn btn-outline-secondary btn-fancy" routerLink="/">
+              <button class="btn btn-outline-secondary btn-fancy" type="button" (click)="navigateToHome()" title="Back to portfolio">
                 <span class="btn-icon">🏠</span>
                 Back to site
-              </a>
+              </button>
               <button class="btn btn-outline-primary btn-fancy" type="button" (click)="exportData()" title="Export all portfolio data">
                 <span class="btn-icon">💾</span>
                 Export
@@ -251,6 +251,7 @@ export class AdminDashboardPage {
   private readonly auth = inject(AuthService);
   private readonly content = inject(ContentService);
   private readonly title = inject(Title);
+  private readonly router = inject(Router);
   
   @ViewChild('confirmDialog') confirmDialog!: ConfirmDialogComponent;
   @ViewChild('notification') notification!: NotificationComponent;
@@ -298,6 +299,10 @@ export class AdminDashboardPage {
     this.mode.set(m);
   }
 
+  navigateToHome(): void {
+    void this.router.navigate(['/']);
+  }
+
   logout(): void {
     this.auth.logout();
     location.assign('/admin/login');
@@ -333,8 +338,15 @@ export class AdminDashboardPage {
     const file = input?.files?.item(0) ?? null;
     if (!file) return;
 
-    const dataUrl = await this.readAsDataUrl(file);
-    this.aboutForm.patchValue({ avatar: dataUrl });
+    try {
+      const dataUrl = await this.readAsDataUrl(file);
+      this.aboutForm.patchValue({ avatar: dataUrl });
+      this.notification.success('Avatar image uploaded successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
+      this.notification.error(errorMessage);
+    }
+
     if (input) input.value = '';
   }
 
@@ -467,29 +479,51 @@ export class AdminDashboardPage {
   async importData(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file) return;
+    
+    if (!file) {
+      this.notification.error('No file selected');
+      return;
+    }
+
+    if (!file.name.endsWith('.json')) {
+      this.notification.error('Please select a JSON file (.json extension required)');
+      return;
+    }
 
     try {
       const confirmed = await this.confirmDialog.show({
         title: 'Import Portfolio Data',
-        message: 'This will overwrite all current portfolio data. Are you sure you want to continue?',
+        message: `This will overwrite all current portfolio data with data from "${file.name}". Are you sure you want to continue?`,
         confirmText: 'Import',
         cancelText: 'Cancel',
         type: 'warning'
       });
 
       if (confirmed) {
-        const data = await this.dataManagement.readDataFromFile(file);
+        // Read file directly without service
+        const fileContent = await this.readFileContent(file);
+        const data = JSON.parse(fileContent);
+        
         await this.dataManagement.importAllData(data);
         await this.load();
-        this.notification.success('Portfolio data imported successfully');
+        this.notification.success(`Portfolio data imported successfully from "${file.name}"`);
       }
     } catch (error) {
-      this.notification.error(error instanceof Error ? error.message : 'Failed to import data. Please check file format.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to import data. Please check file format.';
+      this.notification.error(errorMessage);
     }
 
     // Clear the file input
     input.value = '';
+  }
+
+  private readFileContent(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
   }
 
   async remove(id: string): Promise<void> {
@@ -513,19 +547,26 @@ export class AdminDashboardPage {
     const files = input?.files;
     if (!files || files.length === 0) return;
 
-    const newImages: string[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files.item(i);
-      if (file) {
-        const dataUrl = await this.readAsDataUrl(file);
-        newImages.push(dataUrl);
+    try {
+      const newImages: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i);
+        if (file) {
+          const dataUrl = await this.readAsDataUrl(file);
+          newImages.push(dataUrl);
+        }
       }
-    }
 
-    // Add new images to existing ones
-    const currentImages = this.currentProjectImages();
-    this.currentProjectImages.set([...currentImages, ...newImages]);
-    this.projectForm.patchValue({ images: this.currentProjectImages() });
+      // Add new images to existing ones
+      const currentImages = this.currentProjectImages();
+      this.currentProjectImages.set([...currentImages, ...newImages]);
+      this.projectForm.patchValue({ images: this.currentProjectImages() });
+      
+      this.notification.success(`${newImages.length} image(s) uploaded successfully`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload images';
+      this.notification.error(errorMessage);
+    }
 
     if (input) input.value = '';
   }
@@ -557,8 +598,15 @@ export class AdminDashboardPage {
   private readAsDataUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result ?? ''));
-      reader.onerror = () => reject(reader.error);
+      reader.onload = () => {
+        const result = reader.result as string;
+        if (result && result.startsWith('data:')) {
+          resolve(result);
+        } else {
+          reject(new Error('Failed to convert image to data URL'));
+        }
+      };
+      reader.onerror = () => reject(new Error('Failed to read image file'));
       reader.readAsDataURL(file);
     });
   }

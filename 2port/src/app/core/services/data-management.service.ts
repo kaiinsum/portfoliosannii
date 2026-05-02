@@ -95,21 +95,32 @@ export class DataManagementService {
       reader.onload = (event) => {
         try {
           const result = event.target?.result as string;
+          console.log('File read result:', result);
+          
+          if (!result) {
+            reject(new Error('File is empty or could not be read.'));
+            return;
+          }
+          
           const data = JSON.parse(result) as AdminDataExport;
+          console.log('Parsed data:', data);
           
           // Validate data structure
           if (!this.validateExportData(data)) {
-            reject(new Error('Invalid file format. Please ensure the file is a valid portfolio backup.'));
+            console.log('Validation failed:', data);
+            reject(new Error('Invalid file format. Please ensure file is a valid portfolio backup.'));
             return;
           }
           
           resolve(data);
         } catch (error) {
+          console.error('Parse error:', error);
           reject(new Error('Failed to parse file. Please ensure it\'s a valid JSON file.'));
         }
       };
       
-      reader.onerror = () => {
+      reader.onerror = (error) => {
+        console.error('File reader error:', error);
         reject(new Error('Failed to read file.'));
       };
       
@@ -118,20 +129,39 @@ export class DataManagementService {
   }
 
   private validateExportData(data: any): data is AdminDataExport {
-    return (
-      data &&
-      typeof data === 'object' &&
-      data.version &&
-      data.exportDate &&
-      data.modes &&
-      data.modes.design &&
-      data.modes.technical &&
-      data.modes.design.about &&
-      data.modes.design.contact &&
-      Array.isArray(data.modes.design.projects) &&
-      data.modes.technical.about &&
-      data.modes.technical.contact &&
-      Array.isArray(data.modes.technical.projects)
-    );
+    console.log('Validating data structure:', data);
+    
+    if (!data || typeof data !== 'object') {
+      console.log('Invalid: data is not an object');
+      return false;
+    }
+    
+    if (!data.modes || typeof data.modes !== 'object') {
+      console.log('Invalid: modes is missing or not an object');
+      return false;
+    }
+    
+    if (!data.modes.design || !data.modes.technical) {
+      console.log('Invalid: design or technical mode missing');
+      return false;
+    }
+    
+    const designMode = data.modes.design;
+    const technicalMode = data.modes.technical;
+    
+    // Check design mode structure
+    if (!designMode.about || !designMode.contact || !Array.isArray(designMode.projects)) {
+      console.log('Invalid: design mode structure incomplete');
+      return false;
+    }
+    
+    // Check technical mode structure  
+    if (!technicalMode.about || !technicalMode.contact || !Array.isArray(technicalMode.projects)) {
+      console.log('Invalid: technical mode structure incomplete');
+      return false;
+    }
+    
+    console.log('Validation passed');
+    return true;
   }
 }
