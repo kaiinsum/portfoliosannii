@@ -70,7 +70,7 @@ export class ContactPage implements OnInit, OnDestroy {
   private readonly meta = inject(Meta);
   private readonly router = inject(Router);
 
-  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Design Portfolio' : 'Technical Portfolio'));
+  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
   readonly contact = signal<ContactContent | null>(null);
 
   // Reactive data loading that responds to mode changes

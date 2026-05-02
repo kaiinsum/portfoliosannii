@@ -19,7 +19,7 @@ import { PortfolioModeService } from '../../../../core/services/portfolio-mode.s
           <!-- Theme Switch Button -->
           <div class="mt-4">
             <button class="btn-fancy" (click)="switchTheme()">
-              Switch to {{ modeSvc.isDesign() ? 'Technical' : 'Design' }} Theme
+              Switch to {{ modeSvc.isDesign() ? 'Technical' : 'Creative' }} Theme
             </button>
           </div>
         </div>
@@ -135,7 +135,7 @@ export class ProjectsPage implements OnInit, OnDestroy {
   private readonly meta = inject(Meta);
   private readonly router = inject(Router);
 
-  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Design Portfolio' : 'Technical Portfolio'));
+  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
   readonly projects = signal<Project[]>([]);
   readonly query = signal('');
   readonly sortOption = signal('featured');
@@ -246,7 +246,7 @@ export class ProjectsPage implements OnInit, OnDestroy {
   }
 
   switchTheme(): void {
-    // Toggle between Design (light) and Technical (dark) modes
+    // Toggle between Creative (light) and Technical (dark) modes
     this.modeSvc.toggle();
     
     // Reload page after a short delay to ensure theme change is applied

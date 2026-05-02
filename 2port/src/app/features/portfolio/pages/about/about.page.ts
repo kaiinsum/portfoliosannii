@@ -39,7 +39,7 @@ import type { AboutContent, PortfolioMode, FeatureItem } from '../../../../core/
                 <br>
                 <h2 class="display-5 fw-bold mb-3">
                   @if (isDarkTheme()) {
-                    Want to know about my <span class="highlight-text">Design version</span>?
+                    Want to know about my <span class="highlight-text">Creative version</span>?
                   } @else {
                     Want to know about my <span class="highlight-text">Technical version</span>?
                   }
@@ -107,7 +107,7 @@ export class AboutPage implements OnInit, OnDestroy {
   private readonly meta = inject(Meta);
   private readonly router = inject(Router);
 
-  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Design Portfolio' : 'Technical Portfolio'));
+  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
   readonly about = signal<AboutContent | null>(null);
   readonly currentFeatures = computed(() => this.getDefaultFeatures());
   readonly isDarkTheme = computed(() => {
@@ -223,7 +223,7 @@ export class AboutPage implements OnInit, OnDestroy {
   }
 
   switchTheme(): void {
-    // Toggle between Design (light) and Technical (dark) modes
+    // Toggle between Creative (light) and Technical (dark) modes
     this.modeSvc.toggle();
     
     // No reload needed - theme changes are handled reactively

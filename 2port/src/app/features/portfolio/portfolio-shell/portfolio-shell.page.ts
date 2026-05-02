@@ -32,7 +32,7 @@ import { NeonGlowDirective } from '../../../shared/directives/neon-glow.directiv
             loading="lazy"
           />
           <div class="lh-sm">
-            <div class="fw-semibold text-body">Portfolio</div>
+            <div class="fw-semibold text-body">Quan Toai Cong (San Nii)</div>
             <div class="small text-secondary">{{ modeLabel() }}</div>
           </div>
         </a>
@@ -53,7 +53,7 @@ import { NeonGlowDirective } from '../../../shared/directives/neon-glow.directiv
               (change)="toggleMode()"
             />
             <label class="form-check-label small text-secondary" for="modeSwitch">
-              {{ isTechnical() ? 'Technical' : 'Design' }}
+              {{ isTechnical() ? 'Technical' : 'Creative' }}
             </label>
           </div>
         </nav>
@@ -84,7 +84,7 @@ export class PortfolioShellPage implements OnInit, AfterViewInit {
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly isTechnical = this.modeSvc.isTechnical;
-  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Design Portfolio' : 'Technical Portfolio'));
+  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
 
   readonly year = new Date().getFullYear();
 

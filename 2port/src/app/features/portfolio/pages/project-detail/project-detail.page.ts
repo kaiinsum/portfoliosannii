@@ -114,7 +114,7 @@ export class ProjectDetailPage {
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
 
-  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Design Portfolio' : 'Technical Portfolio'));
+  readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
   readonly project = signal<Project | null>(null);
   readonly allProjects = signal<Project[]>([]);
   readonly currentImageIndex = signal(0);

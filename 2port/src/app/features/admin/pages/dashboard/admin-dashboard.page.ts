@@ -60,7 +60,7 @@ function newId(prefix = 'p'): string {
           <div class="small text-secondary">Mode</div>
           <div class="btn-group" role="group" aria-label="mode">
             <button class="btn btn-sm" [class.btn-primary]="mode() === 'design'" [class.btn-outline-secondary]="mode() !== 'design'" (click)="setMode('design')">
-              Design
+              Creative
             </button>
             <button class="btn btn-sm" [class.btn-primary]="mode() === 'technical'" [class.btn-outline-secondary]="mode() !== 'technical'" (click)="setMode('technical')">
               Technical
