@@ -7,6 +7,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ContentService } from '../../../../core/services/content.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { NotificationComponent } from '../../../../shared/components/notification/notification.component';
+import { DataManagementService } from '../../../../core/services/data-management.service';
 
 function newId(prefix = 'p'): string {
   const id =
@@ -37,6 +38,15 @@ function newId(prefix = 'p'): string {
                 <span class="btn-icon">🏠</span>
                 Back to site
               </a>
+              <button class="btn btn-outline-primary btn-fancy" type="button" (click)="exportData()" title="Export all portfolio data">
+                <span class="btn-icon">💾</span>
+                Export
+              </button>
+              <label class="btn btn-outline-warning btn-fancy" title="Import portfolio data">
+                <span class="btn-icon">📁</span>
+                Import
+                <input type="file" accept=".json" (change)="importData($event)" style="display: none;">
+              </label>
               <button class="btn btn-outline-danger btn-fancy" type="button" (click)="logout()">
                 <span class="btn-icon">🚪</span>
                 Logout
@@ -244,6 +254,8 @@ export class AdminDashboardPage {
   
   @ViewChild('confirmDialog') confirmDialog!: ConfirmDialogComponent;
   @ViewChild('notification') notification!: NotificationComponent;
+  
+  private readonly dataManagement = inject(DataManagementService);
 
   readonly mode = signal<PortfolioMode>('design');
 
@@ -440,6 +452,44 @@ export class AdminDashboardPage {
         this.notification.error('Failed to delete project. Please try again.');
       }
     }
+  }
+
+  async exportData(): Promise<void> {
+    try {
+      const data = await this.dataManagement.exportAllData();
+      this.dataManagement.downloadDataAsFile(data);
+      this.notification.success('Portfolio data exported successfully');
+    } catch (error) {
+      this.notification.error('Failed to export data. Please try again.');
+    }
+  }
+
+  async importData(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    try {
+      const confirmed = await this.confirmDialog.show({
+        title: 'Import Portfolio Data',
+        message: 'This will overwrite all current portfolio data. Are you sure you want to continue?',
+        confirmText: 'Import',
+        cancelText: 'Cancel',
+        type: 'warning'
+      });
+
+      if (confirmed) {
+        const data = await this.dataManagement.readDataFromFile(file);
+        await this.dataManagement.importAllData(data);
+        await this.load();
+        this.notification.success('Portfolio data imported successfully');
+      }
+    } catch (error) {
+      this.notification.error(error instanceof Error ? error.message : 'Failed to import data. Please check file format.');
+    }
+
+    // Clear the file input
+    input.value = '';
   }
 
   async remove(id: string): Promise<void> {

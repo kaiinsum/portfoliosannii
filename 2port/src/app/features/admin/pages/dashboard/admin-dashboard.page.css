@@ -386,3 +386,26 @@
   font-style: italic;
   margin-top: 0.25rem;
 }
+
+/* Import Button Styling */
+.admin-dashboard label.btn-fancy {
+  cursor: pointer;
+  position: relative;
+}
+
+.admin-dashboard label.btn-fancy input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.admin-dashboard label.btn-fancy:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
