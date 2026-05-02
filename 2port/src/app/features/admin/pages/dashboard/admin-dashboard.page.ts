@@ -5,7 +5,6 @@ import { Title } from '@angular/platform-browser';
 import type { AboutContent, ContactContent, PortfolioMode, Project } from '../../../../core/models/portfolio.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ContentService } from '../../../../core/services/content.service';
-import { AssetService } from '../../../../core/services/asset.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { NotificationComponent } from '../../../../shared/components/notification/notification.component';
 
@@ -242,7 +241,6 @@ export class AdminDashboardPage {
   private readonly auth = inject(AuthService);
   private readonly content = inject(ContentService);
   private readonly title = inject(Title);
-  private readonly assetService = inject(AssetService);
   
   @ViewChild('confirmDialog') confirmDialog!: ConfirmDialogComponent;
   @ViewChild('notification') notification!: NotificationComponent;
@@ -323,14 +321,8 @@ export class AdminDashboardPage {
     const file = input?.files?.item(0) ?? null;
     if (!file) return;
 
-    try {
-      const assetUrl = await this.assetService.saveAsset(file, 'avatar');
-      this.aboutForm.patchValue({ avatar: assetUrl });
-      this.notification.success('Avatar updated successfully');
-    } catch (error) {
-      this.notification.error('Failed to update avatar');
-    }
-    
+    const dataUrl = await this.readAsDataUrl(file);
+    this.aboutForm.patchValue({ avatar: dataUrl });
     if (input) input.value = '';
   }
 
@@ -460,13 +452,8 @@ export class AdminDashboardPage {
     const file = input?.files?.item(0) ?? null;
     if (!file) return;
 
-    try {
-      const assetUrl = await this.assetService.saveAsset(file, 'projects');
-      this.projectForm.patchValue({ image: assetUrl });
-      this.notification.success('Image uploaded successfully');
-    } catch (error) {
-      this.notification.error('Failed to upload image');
-    }
+    const dataUrl = await this.readAsDataUrl(file);
+    this.projectForm.patchValue({ image: dataUrl });
 
     if (input) input.value = '';
   }
@@ -476,18 +463,19 @@ export class AdminDashboardPage {
     const files = input?.files;
     if (!files || files.length === 0) return;
 
-    try {
-      const newImages = await this.assetService.saveMultipleAssets(files, 'projects');
-      
-      // Add new images to existing ones
-      const currentImages = this.currentProjectImages();
-      this.currentProjectImages.set([...currentImages, ...newImages]);
-      this.projectForm.patchValue({ images: this.currentProjectImages() });
-      
-      this.notification.success(`${files.length} images uploaded successfully`);
-    } catch (error) {
-      this.notification.error('Failed to upload images');
+    const newImages: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files.item(i);
+      if (file) {
+        const dataUrl = await this.readAsDataUrl(file);
+        newImages.push(dataUrl);
+      }
     }
+
+    // Add new images to existing ones
+    const currentImages = this.currentProjectImages();
+    this.currentProjectImages.set([...currentImages, ...newImages]);
+    this.projectForm.patchValue({ images: this.currentProjectImages() });
 
     if (input) input.value = '';
   }
@@ -516,5 +504,13 @@ export class AdminDashboardPage {
     });
   }
 
+  private readAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ''));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
   }
+}
 
