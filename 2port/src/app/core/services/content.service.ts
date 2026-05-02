@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import type { AboutContent, ContactContent, PortfolioMode, Project } from '../models/portfolio.models';
 import { StorageService } from './storage.service';
+import { AssetFileService } from './asset-file.service';
 
 type ModeContent = {
   about: AboutContent;
@@ -17,6 +18,7 @@ const KEY = (mode: PortfolioMode) => `portfolio.content.${mode}.v${CONTENT_VERSI
 export class ContentService {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(StorageService);
+  private readonly assetFile = inject(AssetFileService);
 
   async ensureSeeded(mode: PortfolioMode): Promise<void> {
     const existing = this.storage.getJson<ModeContent>(KEY(mode));
