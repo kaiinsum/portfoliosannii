@@ -100,17 +100,21 @@ import { NavigationEnd } from '@angular/router';
                   }
                 </div>
                 <div class="project-content">
-                  <h3 class="project-title">{{ p.title }}</h3>
-                  @if (p.date) {
-                    <div class="project-date">
-                      <span class="year-badge">{{ getYear(p.date) }}</span>
-                    </div>
-                  }
-                  <p class="project-description">{{ p.description }}</p>
-                  <div class="project-tech">
-                    @for (t of p.techStack; track t) {
-                      <span class="tech-badge">{{ t }}</span>
+                  <div>
+                    <h3 class="project-title">{{ p.title }}</h3>
+                    @if (p.date) {
+                      <div class="project-date">
+                        <span class="year-badge">{{ getYear(p.date) }}</span>
+                      </div>
                     }
+                  </div>
+                  <div class="project-content-bottom">
+                    <p class="project-description">{{ p.description }}</p>
+                    <div class="project-tech">
+                      @for (t of p.techStack; track t) {
+                        <span class="tech-badge">{{ t }}</span>
+                      }
+                    </div>
                   </div>
                 </div>
               </a>

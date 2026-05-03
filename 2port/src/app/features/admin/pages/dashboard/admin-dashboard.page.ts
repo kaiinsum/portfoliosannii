@@ -22,7 +22,7 @@ function newId(prefix = 'p'): string {
   selector: 'app-admin-dashboard-page',
   imports: [ReactiveFormsModule, ConfirmDialogComponent, NotificationComponent],
   template: `
-    <div class="admin-dashboard">
+    <div class="admin-dashboard" [class.technical-mode]="mode() === 'technical'" appColorSplash>
       <div class="container py-4">
         <!-- Header -->
         <div class="admin-header">
