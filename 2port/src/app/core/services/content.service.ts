@@ -71,6 +71,14 @@ export class ContentService {
     await this.fileApi.saveProjects(mode, next);
   }
 
+  async updateProjects(mode: PortfolioMode, projects: Project[]): Promise<void> {
+    const data = await this.getModeContent(mode);
+    this.storage.setJson(KEY(mode), { ...data, projects });
+    
+    // Save to asset_main file
+    await this.fileApi.saveProjects(mode, projects);
+  }
+
   async deleteProject(mode: PortfolioMode, projectId: string): Promise<void> {
     const data = await this.getModeContent(mode);
     const next = data.projects.filter((p) => p.id !== projectId);

@@ -8,6 +8,7 @@ import { ContentService } from '../../../../core/services/content.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { NotificationComponent } from '../../../../shared/components/notification/notification.component';
 import { DataManagementService } from '../../../../core/services/data-management.service';
+import { FileApiService } from '../../../../core/services/file-api.service';
 
 function newId(prefix = 'p'): string {
   const id =
@@ -41,6 +42,10 @@ function newId(prefix = 'p'): string {
               <button class="btn btn-outline-primary btn-fancy" type="button" (click)="exportData()" title="Export all portfolio data">
                 <span class="btn-icon">💾</span>
                 Export
+              </button>
+              <button class="btn btn-outline-success btn-fancy" type="button" (click)="updateAssetFiles()" title="Save all changes to asset_main files">
+                <span class="btn-icon">🔄</span>
+                Update Files
               </button>
               <label class="btn btn-outline-warning btn-fancy" title="Import portfolio data">
                 <span class="btn-icon">📁</span>
@@ -257,6 +262,7 @@ export class AdminDashboardPage {
   @ViewChild('notification') notification!: NotificationComponent;
   
   private readonly dataManagement = inject(DataManagementService);
+  private readonly fileApi = inject(FileApiService);
 
   readonly mode = signal<PortfolioMode>('design');
 
@@ -473,6 +479,24 @@ export class AdminDashboardPage {
       this.notification.success('Portfolio data exported successfully');
     } catch (error) {
       this.notification.error('Failed to export data. Please try again.');
+    }
+  }
+
+  async updateAssetFiles(): Promise<void> {
+    try {
+      // Get current data for both modes
+      const [designData, technicalData] = await Promise.all([
+        this.content.getModeContent('design'),
+        this.content.getModeContent('technical')
+      ]);
+
+      // Use FileApiService to download all files at once
+      await this.fileApi.saveAllAssetFiles(designData, technicalData);
+
+      this.notification.success('Files downloaded! Replace the files in your asset_main folder with the downloaded files.');
+    } catch (error) {
+      console.error('Failed to update asset files:', error);
+      this.notification.error('Failed to download asset files. Please try again.');
     }
   }
 
