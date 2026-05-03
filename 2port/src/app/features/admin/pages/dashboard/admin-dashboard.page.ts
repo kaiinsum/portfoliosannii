@@ -93,7 +93,7 @@ function newId(prefix = 'p'): string {
                 <div class="mb-3">
                   <label class="form-label">Avatar path</label>
                   <input class="form-control" formControlName="avatar" />
-                  <div class="form-text">Example: <code>assets/avatar/avatar.svg</code></div>
+                  <div class="form-text">Example: <code>asset_main/avatar/avatar.svg</code></div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Upload avatar (optional)</label>
@@ -264,7 +264,7 @@ export class AdminDashboardPage {
     heading: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     intro: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     tags: new FormControl('', { nonNullable: true }),
-    avatar: new FormControl('assets/avatar/avatar.svg', { nonNullable: true, validators: [Validators.required] }),
+    avatar: new FormControl('asset_main/avatar/avatar.svg', { nonNullable: true, validators: [Validators.required] }),
   });
 
   readonly contactForm = new FormGroup({

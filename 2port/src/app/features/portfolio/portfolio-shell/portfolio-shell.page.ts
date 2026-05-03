@@ -25,7 +25,7 @@ import { NeonGlowDirective } from '../../../shared/directives/neon-glow.directiv
           <img
             class="avatar"
             [class.avatar--flipped]="isTechnical()"
-            src="assets/avatar/avatar.svg"
+            src="asset_main/avatar/avatar.svg"
             alt="Avatar"
             width="44"
             height="44"

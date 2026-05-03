@@ -16,7 +16,7 @@ import type { AboutContent, PortfolioMode, FeatureItem } from '../../../../core/
             <div class="d-flex justify-content-center mb-4">
               <img
                 class="rounded-circle hero-avatar"
-                [src]="about()?.avatar || 'assets/avatar/avatar.png'"
+                [src]="about()?.avatar || 'asset_main/avatar/avatar.png'"
                 alt="Avatar"
                 width="120"
                 height="120"
@@ -158,7 +158,7 @@ export class AboutPage implements OnInit, OnDestroy {
         heading: 'Welcome to My Portfolio',
         intro: 'Creating amazing digital experiences with passion and precision',
         tags: ['Web Development', 'UI/UX Design', 'Performance Optimization'],
-        avatar: 'assets/avatar/avatar.png'
+        avatar: 'asset_main/avatar/avatar.png'
       });
     }
   }

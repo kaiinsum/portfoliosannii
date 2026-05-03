@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "lastModified": "2026-05-03T14:18:00.000Z",
+  "modes": {
+    "design": {
+      "about": {
+        "heading": "Hi, I'm Your Name",
+        "intro": "I design delightful interfaces with a focus on typography, layout, and motion. This is the Design Portfolio mode (light theme).",
+        "tags": ["UI Design", "UX", "Figma", "Design Systems", "Branding"],
+        "avatar": "asset_main/avatar/avatar.svg"
+      },
+      "contact": {
+        "email": "you@example.com",
+        "socials": [
+          { "label": "GitHub", "url": "https://github.com/your-handle" },
+          { "label": "LinkedIn", "url": "https://www.linkedin.com/in/your-handle/" }
+        ]
+      },
+      "projects": []
+    },
+    "technical": {
+      "about": {
+        "heading": "Hi, I'm Your Name",
+        "intro": "I build robust technical solutions with a focus on performance, scalability, and clean code. This is the Technical Portfolio mode (dark theme).",
+        "tags": ["Web Development", "TypeScript", "Angular", "Node.js", "Performance"],
+        "avatar": "asset_main/avatar/avatar.svg"
+      },
+      "contact": {
+        "email": "you@example.com",
+        "socials": [
+          { "label": "GitHub", "url": "https://github.com/your-handle" },
+          { "label": "LinkedIn", "url": "https://www.linkedin.com/in/your-handle/" }
+        ]
+      },
+      "projects": []
+    }
+  },
+  "assets": {}
+}

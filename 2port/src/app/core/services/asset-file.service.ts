@@ -28,7 +28,7 @@ export interface AssetFileData {
 })
 export class AssetFileService {
   private readonly http = inject(HttpClient);
-  private readonly ASSET_FILE_PATH = 'assets/portfolio-data.json';
+  private readonly ASSET_FILE_PATH = 'asset_main/portfolio-data.json';
 
   async loadAssetFile(): Promise<AssetFileData> {
     try {
@@ -146,7 +146,7 @@ export class AssetFileService {
             heading: 'Hi, I\'m Quan Toai Cong',
             intro: 'I create delightful creative experiences with a focus on design, typography, and motion. This is the Creative Portfolio mode (light theme).',
             tags: ['Creative Design', 'UX', 'Figma', 'Design Systems', 'Branding'],
-            avatar: 'assets/avatar/avatar.svg'
+            avatar: 'asset_main/avatar/avatar.svg'
           },
           contact: {
             email: 'contact@example.com',
@@ -162,7 +162,7 @@ export class AssetFileService {
             heading: 'Hi, I\'m Quan Toai Cong',
             intro: 'I build robust technical solutions with a focus on performance, scalability, and clean code. This is the Technical Portfolio mode (dark theme).',
             tags: ['Web Development', 'TypeScript', 'Angular', 'Node.js', 'Performance'],
-            avatar: 'assets/avatar/avatar.svg'
+            avatar: 'asset_main/avatar/avatar.svg'
           },
           contact: {
             email: 'contact@example.com',
