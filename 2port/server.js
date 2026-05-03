@@ -85,10 +85,124 @@ app.post('/api/assets/portfolio-data.json', async (req, res) => {
   }
 });
 
-// Serve the Angular app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/routing/index.html'));
+// Image handling endpoint
+app.post('/api/assets/images', async (req, res) => {
+  try {
+    const { path, data } = req.body;
+    
+    if (!path || !data) {
+      return res.status(400).json({ error: 'Path and data are required' });
+    }
+    
+    const filePath = `src/asset_main/${path}`;
+    
+    // Handle base64 data
+    if (data.startsWith('data:')) {
+      const matches = data.match(/^data:(.+?);base64,(.+)$/);
+      if (!matches || matches.length !== 3) {
+        return res.status(400).json({ error: 'Invalid base64 data format' });
+      }
+      
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      const fullPath = path.join(__dirname, filePath);
+      const dir = path.dirname(fullPath);
+      
+      await ensureDir(dir);
+      await fs.writeFile(fullPath, buffer);
+      
+      console.log(`✅ Successfully wrote image to: ${filePath}`);
+      res.json({ success: true, message: `Image saved to ${path}` });
+    } else {
+      res.status(400).json({ error: 'Invalid image data format' });
+    }
+  } catch (error) {
+    console.error(`❌ Error writing image:`, error);
+    res.status(500).json({ error: error.message });
+  }
 });
+
+
+// Specific GET endpoints for reading asset files
+app.get('/api/assets/design/about.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/design/about.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/design/contact.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/design/contact.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/design/projects.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/design/projects.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/technical/about.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/technical/about.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/technical/contact.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/technical/contact.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/technical/projects.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/data/technical/projects.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets/portfolio-data.json', async (req, res) => {
+  try {
+    const fullPath = path.join(__dirname, 'src/asset_main/portfolio-data.json');
+    const data = await fs.readFile(fullPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // Start server
 app.listen(PORT, () => {

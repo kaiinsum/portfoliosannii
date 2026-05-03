@@ -23,13 +23,11 @@ export class ContentService {
   private readonly fileApi = inject(FileApiService);
 
   async ensureSeeded(mode: PortfolioMode): Promise<void> {
-    const existing = this.storage.getJson<ModeContent>(KEY(mode));
-    if (existing) return;
-
+    // Always read from asset_main files
     const [about, contact, projects] = await Promise.all([
       firstValueFrom(this.http.get<AboutContent>(`asset_main/data/${mode}/about.json`)),
       firstValueFrom(this.http.get<ContactContent>(`asset_main/data/${mode}/contact.json`)),
-      firstValueFrom(this.http.get<Project[]>(`asset_main/data/${mode}/projects.json`)),
+      firstValueFrom(this.http.get<Project[]>(`asset_main/data/${mode}/projects.json`))
     ]);
 
     this.storage.setJson(KEY(mode), { about, contact, projects });

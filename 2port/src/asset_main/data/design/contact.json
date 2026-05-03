@@ -1,8 +1,17 @@
 {
-  "email": "you@example.com",
+  "email": "realsannii69@gmail.com",
   "socials": [
-    { "label": "GitHub", "url": "https://github.com/your-handle" },
-    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/your-handle/" }
+    {
+      "label": "GitHub",
+      "url": "https://github.com/kaiinsum"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/guansuigong/"
+    },
+    {
+      "label": "Youtube",
+      "url": "https://www.youtube.com/@SanNiisSchoolworknProject"
+    }
   ]
 }
-

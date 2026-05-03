@@ -71,10 +71,7 @@ function newId(prefix = 'p'): string {
               Technical
             </button>
           </div>
-          <button class="btn btn-sm btn-outline-secondary ms-auto" type="button" (click)="resetMode()">
-            Reset this mode to JSON defaults
-          </button>
-        </div>
+                  </div>
       </div>
 
       <div class="row g-3">
@@ -314,11 +311,7 @@ export class AdminDashboardPage {
     location.assign('/admin/login');
   }
 
-  async resetMode(): Promise<void> {
-    await this.content.resetMode(this.mode());
-    await this.load();
-  }
-
+  
   async saveAbout(): Promise<void> {
     try {
       const raw = this.aboutForm.getRawValue();
