@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Renderer2, OnInit, OnDestroy, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { DeviceDetectionService } from '../../core/services/device-detection.service';
 
 interface ColorSplash {
   element: HTMLElement;
@@ -20,11 +21,13 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
   private element = inject(ElementRef);
   private renderer = inject(Renderer2);
   private document = inject(DOCUMENT);
+  private readonly deviceDetection = inject(DeviceDetectionService);
   
   private splashes: ColorSplash[] = [];
   private animationFrameId: number | null = null;
   private isDarkTheme = false;
   private themeObserver: MutationObserver | null = null;
+  private animationSettings = this.deviceDetection.getAnimationSettings();
   
   private readonly colors = [
     'rgba(102, 126, 234, 0.6)',  // Blue
@@ -40,15 +43,19 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkTheme();
     this.observeThemeChanges();
-    this.startAnimation();
     
-    // Add initial splash effect on page load
-    setTimeout(() => {
-      if (!this.isDarkTheme) {
-        this.createInitialSplash();
-        this.addMouseClickListener();
-      }
-    }, 100);
+    // Only start animations if enabled for this device
+    if (this.animationSettings.enableColorSplash) {
+      this.startAnimation();
+      
+      // Add initial splash effect on page load
+      setTimeout(() => {
+        if (!this.isDarkTheme) {
+          this.createInitialSplash();
+          this.addMouseClickListener();
+        }
+      }, 100);
+    }
   }
 
   ngOnDestroy(): void {
@@ -180,7 +187,11 @@ export class ColorSplashDirective implements OnInit, OnDestroy {
   }
 
   private createRandomSplash(): void {
-    if (Math.random() < 0.08) { // 8% chance per frame (even more frequent)
+    // Adjust splash creation frequency based on device performance
+    const splashChance = this.deviceDetection.isMobile() ? 0.02 : 
+                        this.deviceDetection.isTablet() ? 0.04 : 0.08;
+    
+    if (Math.random() < splashChance && this.splashes.length < this.animationSettings.maxConcurrentAnimations) {
       const hostElement = this.element.nativeElement as HTMLElement;
       const rect = hostElement.getBoundingClientRect();
       

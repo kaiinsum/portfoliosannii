@@ -546,6 +546,39 @@ html[data-theme='dark'] .btn.btn-outline-secondary:hover {
   transform: translateY(0);
 }
 
+/* Performance optimizations for mobile devices */
+@media (max-width: 767px) {
+  /* Disable scroll animations on mobile */
+  .animate-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  
+  /* Reduce motion for better performance */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
+  }
+  
+  /* Optimize image rendering */
+  img {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Reduce animation complexity on tablets */
+  .animate-on-scroll {
+    transition-duration: 0.3s ease;
+  }
+}
+
 /* Contact Page Styles */
 .contact-hero {
   padding: 80px 0 40px;

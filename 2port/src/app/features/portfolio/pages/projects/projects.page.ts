@@ -4,6 +4,9 @@ import { Router, RouterLink } from '@angular/router';
 import type { Project, PortfolioMode } from '../../../../core/models/portfolio.models';
 import { ContentService } from '../../../../core/services/content.service';
 import { PortfolioModeService } from '../../../../core/services/portfolio-mode.service';
+import { DeviceDetectionService } from '../../../../core/services/device-detection.service';
+import { filter } from 'rxjs';
+import { NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-projects-page',
@@ -69,8 +72,9 @@ import { PortfolioModeService } from '../../../../core/services/portfolio-mode.s
             <div class="project-card-container animate-on-scroll">
               <a class="project-card" [routerLink]="['/projects', p.id]">
                 <div class="project-image-container" 
-                     (mouseenter)="startImageSlideshow(p.id, getAllImages(p))"
-                     (mouseleave)="stopImageSlideshow(p.id)">
+                     [attr.data-slideshow-enabled]="animationSettings().enableImageSlideshow"
+                     (mouseenter)="animationSettings().enableImageSlideshow ? startImageSlideshow(p.id, getAllImages(p)) : null"
+                     (mouseleave)="animationSettings().enableImageSlideshow ? stopImageSlideshow(p.id) : null">
                   <img class="project-image" 
                        [src]="getCurrentImage(p.id, getAllImages(p))" 
                        [alt]="p.title" 
@@ -134,6 +138,10 @@ export class ProjectsPage implements OnInit, OnDestroy {
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
   private readonly router = inject(Router);
+  private readonly deviceDetection = inject(DeviceDetectionService);
+  
+  private routerSubscription: any;
+  readonly animationSettings = computed(() => this.deviceDetection.getAnimationSettings());
 
   readonly modeLabel = computed(() => (this.modeSvc.isDesign() ? 'Creative Portfolio' : 'Technical Portfolio'));
   readonly projects = signal<Project[]>([]);
@@ -217,6 +225,18 @@ export class ProjectsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('ProjectsPage: ngOnInit called');
     this.updatePageMetadata();
+    
+    // Listen to router events to detect when user navigates back to projects page
+    this.routerSubscription = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        // Check if we're navigating back to the projects page
+        if (event.urlAfterRedirects === '/projects' || event.urlAfterRedirects.startsWith('/projects?')) {
+          console.log('ProjectsPage: User navigated back to projects page, refreshing data');
+          // Force data refresh when returning to projects page
+          void this.loadData(this.modeSvc.mode());
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -224,6 +244,11 @@ export class ProjectsPage implements OnInit, OnDestroy {
     // Clean up all intervals
     this.slideshowIntervals.forEach(interval => clearInterval(interval));
     this.slideshowIntervals.clear();
+    
+    // Clean up router subscription
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 
   private updatePageMetadata(): void {
@@ -276,7 +301,8 @@ export class ProjectsPage implements OnInit, OnDestroy {
   }
 
   startImageSlideshow(projectId: string, images: string[]): void {
-    if (images.length <= 1) return;
+    const settings = this.animationSettings();
+    if (!settings.enableImageSlideshow || images.length <= 1) return;
     
     // Stop any existing slideshow for this project
     this.stopImageSlideshow(projectId);
@@ -286,12 +312,12 @@ export class ProjectsPage implements OnInit, OnDestroy {
       this.currentImageIndexes.set(projectId, 0);
     }
     
-    // Start slideshow
+    // Start slideshow with device-aware interval
     const interval = setInterval(() => {
       const currentIndex = this.currentImageIndexes.get(projectId) || 0;
       const nextIndex = (currentIndex + 1) % images.length;
       this.currentImageIndexes.set(projectId, nextIndex);
-    }, 1500); // Change image every 1.5 seconds
+    }, settings.slideshowInterval);
     
     this.slideshowIntervals.set(projectId, interval);
   }
