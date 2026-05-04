@@ -99,7 +99,7 @@ function newId(prefix = 'p'): string {
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Upload avatar (optional)</label>
-                  <input class="form-control" type="file" accept="image/*" (change)="onAvatarUpload($event)" />
+                  <input class="form-control" type="file" accept="image/png,image/jpeg,image/jpg" (change)="onAvatarUpload($event)" />
                   <div class="form-text">Saved to browser storage as a data URL (per mode).</div>
                 </div>
                 <button class="btn btn-primary" type="submit" [disabled]="aboutForm.invalid">Save About</button>
@@ -192,13 +192,13 @@ function newId(prefix = 'p'): string {
                     </div>
                     <div class="col-12 col-lg-6">
                       <label class="form-label">Upload main image (optional)</label>
-                      <input class="form-control" type="file" accept="image/*" (change)="onImageUpload($event)" />
+                      <input class="form-control" type="file" accept="image/png,image/jpeg,image/jpg" (change)="onImageUpload($event)" />
                       <div class="form-text">Tip: large files may exceed browser storage limits.</div>
                     </div>
                     <div class="col-12">
                       <label class="form-label">Additional Images</label>
                       <div class="mb-3">
-                        <input class="form-control" type="file" accept="image/*" multiple (change)="onMultipleImageUpload($event)" />
+                        <input class="form-control" type="file" accept="image/png,image/jpeg,image/jpg" multiple (change)="onMultipleImageUpload($event)" />
                         <div class="form-text">Upload multiple images at once. These will appear as sub-images in the project gallery.</div>
                       </div>
                       
@@ -336,6 +336,14 @@ export class AdminDashboardPage {
     const input = ev.target as HTMLInputElement | null;
     const file = input?.files?.item(0) ?? null;
     if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      this.notification.error('Please upload a PNG or JPG image file');
+      if (input) input.value = '';
+      return;
+    }
 
     try {
       const dataUrl = await this.readAsDataUrl(file);
@@ -553,8 +561,22 @@ export class AdminDashboardPage {
     const file = input?.files?.item(0) ?? null;
     if (!file) return;
 
-    const dataUrl = await this.readAsDataUrl(file);
-    this.projectForm.patchValue({ image: dataUrl });
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      this.notification.error('Please upload a PNG or JPG image file');
+      if (input) input.value = '';
+      return;
+    }
+
+    try {
+      const dataUrl = await this.readAsDataUrl(file);
+      this.projectForm.patchValue({ image: dataUrl });
+      this.notification.success('Main image uploaded successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
+      this.notification.error(errorMessage);
+    }
 
     if (input) input.value = '';
   }
@@ -566,12 +588,26 @@ export class AdminDashboardPage {
 
     try {
       const newImages: string[] = [];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      
       for (let i = 0; i < files.length; i++) {
         const file = files.item(i);
         if (file) {
+          // Validate file type
+          if (!allowedTypes.includes(file.type)) {
+            this.notification.error(`File "${file.name}" is not a valid PNG or JPG image`);
+            continue;
+          }
+          
           const dataUrl = await this.readAsDataUrl(file);
           newImages.push(dataUrl);
         }
+      }
+
+      if (newImages.length === 0) {
+        this.notification.error('No valid PNG or JPG images were uploaded');
+        if (input) input.value = '';
+        return;
       }
 
       // Add new images to existing ones

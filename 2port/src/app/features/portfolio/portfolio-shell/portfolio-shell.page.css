@@ -37,8 +37,16 @@ html[data-theme='dark'] .app-header {
   filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.14));
 }
 
+.avatar:hover {
+  filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.14));
+}
+
 .avatar--flipped {
   transform: rotate(180deg);
+}
+
+.avatar--flipped:hover {
+  filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.14));
 }
 
 /* Prevent header actions from wrapping on small screens */
